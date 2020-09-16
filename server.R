@@ -176,6 +176,16 @@ shinyServer(function(input, output, session) {
     })
     
     
+    avg_availability <- reactive({
+      
+      cities_top() %>%
+        summarise(avg = floor(mean(availability_365)))
+      
+    })
+    
+    
+    
+    
     
     # Show top-N the most listings
     output$topNmost <- renderPlot({
@@ -188,7 +198,7 @@ shinyServer(function(input, output, session) {
             ggplot() +
             geom_bar(aes(reorder(as.factor(neighbourhood), sum_neigh), sum_neigh, fill=neighbourhood), stat = 'identity') +
             geom_text(aes(neighbourhood, sum_neigh, label = sum_neigh), hjust = 2.0,  color = "white") +
-            scale_fill_brewer(palette = "Set3") +
+            scale_fill_brewer(palette = "Spectral") +
             theme(legend.position = 'none') +
             ggtitle("The Most Listing Borough") + 
             xlab("Neighbourhood") + 
@@ -202,8 +212,8 @@ shinyServer(function(input, output, session) {
     })
     
     
-    output$airbnbInfo <- renderUI({
-        list(
+    output$airbnbInfo1 <- renderUI({
+        
             infoBox(
                 title = "Number of Boroughs",
                 value = n_bor(),
@@ -211,25 +221,55 @@ shinyServer(function(input, output, session) {
                 fill = T, 
                 width = NULL,
                 icon = icon("city")
-            ),
-            infoBox(
-                title = "Number of hosts",
-                value = n_host(),
-                color = "olive", 
-                fill = T, 
-                width = NULL,
-                icon = icon("house-user")
-            ),
-            infoBox(
-                title = "Avg. Rent per Night ($)",
-                value = avg_rent()[, 2],
-                color = "olive", 
-                fill = T, 
-                width = NULL,
-                icon = icon("hand-holding-usd")
             )
-        )
+        
     })
+    
+    
+    output$airbnbInfo2 <- renderUI({
+      
+      
+      infoBox(
+        title = "Number of hosts",
+        value = n_host(),
+        color = "olive", 
+        fill = T, 
+        width = NULL,
+        icon = icon("house-user")
+      )
+      
+    })
+    
+    
+    output$airbnbInfo3 <- renderUI({
+      
+      
+      infoBox(
+        title = "Avg. Rent per Night",
+        value = paste("$",avg_rent()[, 2]),
+        color = "olive", 
+        fill = T, 
+        width = NULL,
+        icon = icon("hand-holding-usd")
+      )
+      
+    })
+    
+    
+    output$airbnbInfo4 <- renderUI({
+      
+      
+      infoBox(
+        title = "Avg. Availability Days per Year",
+        value = paste(avg_availability(), "days"),
+        color = "olive", 
+        fill = T, 
+        width = NULL,
+        icon = icon("history")
+      )
+      
+    })
+    
     
     
     
